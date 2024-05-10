@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #444;
+        }
+
+        nav input {
+            padding: 8px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        nav button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        label, input, textarea {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        #dataContainer {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .dataItem {
+            flex: 0 0 200px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .dataItem img {
+            max-width: 100%;
+            height: auto;
+            width: 190px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Add & Find Address</h1>
+    </header>
+
+    <nav>
+        <input type="text" id="search" placeholder="Search...">
+        <button type="button" onclick="searchData()">Search</button>
+    </nav>
+
+    <form id="dataForm" action="http://localhost:3000/submit" method="POST" enctype="multipart/form-data">
+        <label for="name">Name of the Owner:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="address">Enter Address of the Place (Can also provide reviews)</label>
+        <textarea id="address" name="address" rows="4" required></textarea>
+
+        <label for="image">Upload Image of the Place:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+
+        <button type="button" onclick="submitData()">Submit</button>
+    </form>
+
+    <div id="dataContainer"></div>
+
+    <script>
+        function submitData() {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const image = document.getElementById('image').files[0];
+
+            // Create a new data item
+            const dataContainer = document.getElementById('dataContainer');
+            const dataItem = document.createElement('div');
+            dataItem.classList.add('dataItem');
+
+            // Display entered data
+            dataItem.innerHTML = `
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Address:</strong> ${address}</p>
+                <img src="${URL.createObjectURL(image)}" alt="Uploaded Image">
+            `;
+
+            // Add the new data item to the container
+            dataContainer.appendChild(dataItem);
+
+            // Clear the form
+            document.getElementById('dataForm').reset();
+        }
+
+        function searchData() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const dataContainer = document.getElementById('dataContainer');
+            const dataItems = dataContainer.getElementsByClassName('dataItem');
+
+            // Loop through data items and show/hide based on search term
+            for (const item of dataItems) {
+                const textContent = item.textContent.toLowerCase();
+                if (textContent.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
